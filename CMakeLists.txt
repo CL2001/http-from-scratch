@@ -11,7 +11,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 include_directories(include)
 
 # Add the executable
-add_executable(http_from_scratch
-    src/main.cpp
-    src/utils.cpp
+add_executable(server
+    src/server.cpp
+)
+
+add_executable(client
+    src/client.cpp
 )
