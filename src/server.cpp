@@ -5,7 +5,41 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-using namespace std;
+
+void receiveLoop(int &clientSocket)
+{
+    // Set 1 kB buffer
+    char buffer[1024] = {0};
+    while (true)
+    {
+        // Receiving data from client
+        ssize_t message_size = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
+
+        // Detects error
+        if (message_size <= 0) //ssize_t is set to -1 when an error occurs
+        {
+            std::cout << "Error, message is -1" << std::endl;
+            return;
+        }
+
+        // Set last byte to end string
+        buffer[message_size] = '\0';
+
+        // Display message
+        std::cout << "Message from client:\n" << buffer << std::endl;
+
+        if (strcmp(buffer, "Close") == false)
+        {
+            std::cout << "Closing server" << std::endl;
+            return;
+        }
+
+        // Sending response back to client
+        const char* response = "Hello from server!";
+        send(clientSocket, response, strlen(response), 0);
+    }
+}
+
 
 int main()
 {
@@ -19,14 +53,7 @@ int main()
     listen(serverSocket, 5);
     int clientSocket = accept(serverSocket, nullptr, nullptr);
 
-    // Receiving data from client
-    char buffer[1024] = {0};
-    recv(clientSocket, buffer, sizeof(buffer), 0);
-    cout << "Message from client: " << buffer << endl;
-
-    // Sending response back to client
-    const char* response = "Hello from server!";
-    send(clientSocket, response, strlen(response), 0);
+    receiveLoop(clientSocket);
 
     // Close sockets
     close(clientSocket);
