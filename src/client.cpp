@@ -29,7 +29,8 @@ int main()
     char buffer[1024] = {0};
 
     const char* messages[] = {GET::message1, POST::message2, GET::message3, GET::message4, 
-        GET::message5, GET::message6, POST::message7, GET::message8};
+                                GET::message5, GET::message6, POST::message7, GET::message8, 
+                                GET::message9, GET::message10};
     int messages_length = sizeof(messages) / sizeof(messages[0]);
 
     // Handle requests

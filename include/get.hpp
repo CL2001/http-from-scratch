@@ -40,6 +40,21 @@ const char* message8 =
 "Host: mysecretserver.com\n"
 "Authorization: correct_access_code\n";
 
+
+// Message for request 9
+// Expected: Receive moved error (301 Moved Permanently)
+const char* message9 = 
+"GET / HTTP/1.1\n"
+"Host: myopenserver_old.com\n";
+
+// Message for request 10
+// Expected: Receive error (404 Not Found)
+const char* message10 = 
+"GET / HTTP/1.1\n"
+"Host: unkown.com\n";
+
 };
+
+
 
 

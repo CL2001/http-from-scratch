@@ -4,11 +4,12 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include "handle_response.hpp"
 
 
 void receiveLoop(int &clientSocket)
 {
-    // Set 1 kB buffer
+    // Set 1 kB buffer char buffer[1024] = {0};
     char buffer[1024] = {0};
     while (true)
     {
@@ -35,8 +36,9 @@ void receiveLoop(int &clientSocket)
         }
 
         // Sending response back to client
-        const char* response = "Hello from server!";
-        send(clientSocket, response, strlen(response), 0);
+        std::string response = handle_response(buffer, static_cast<int>(message_size));
+        const char* c_response = response.c_str();
+        send(clientSocket, c_response, strlen(c_response), 0);
     }
 }
 
