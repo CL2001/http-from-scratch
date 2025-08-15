@@ -36,7 +36,8 @@ void receiveLoop(int &clientSocket)
         }
 
         // Sending response back to client
-        std::string response = handle_response(buffer, static_cast<int>(message_size));
+        std::string buffer_string(buffer);
+        std::string response = handle_response(buffer_string);
         const char* c_response = response.c_str();
         send(clientSocket, c_response, strlen(c_response), 0);
     }

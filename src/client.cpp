@@ -36,6 +36,7 @@ int main()
     // Handle requests
     for (int i = 0; i < messages_length; i++){
         handleRequest(messages[i], strlen(messages[i]), buffer, sizeof(buffer), clientSocket);
+        break; //temps
     }
     
 
