@@ -15,7 +15,3 @@ add_executable(server
     src/server.cpp
     src/handle_response.cpp
 )
-
-add_executable(client
-    src/client.cpp
-)

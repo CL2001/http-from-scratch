@@ -9,25 +9,40 @@ The connection will be made over sockets so the focus remains on http
 
 
 
-## Install and run the project
+## Start the server
 To use, install make sure a c++ compiler and cmake are installed
 
-Build the project
+Start the server
 ```bash
-make build
+make
 ```
 
 
-Run the server
+## Run these commands in a seperate terminal
+
+Basic server response
 ```bash
-make server
+curl localhost:8080
 ```
 
-
-Run the client
+Returns an html file in output.html
 ```bash
-make client
+curl -o output.html localhost:8080/public-html
 ```
+
+Modify a page and retrieve it
+```bash
+curl -X POST -d "message=I love this!" localhost:8080/modify
+```
+```bash
+curl localhost:8080/modify
+```
+
+Access private hidden ressources
+```bash
+curl -u username:password localhost:8080/private
+```
+
 
 All c++ code is found in the src folder and header files are found in the include folder
 

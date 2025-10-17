@@ -1,66 +1,102 @@
 // server.cpp
-#include <cstring>
 #include <iostream>
+#include <string>
+#include <cstring>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#include "handle_response.hpp"
+#include <csignal>
 
-
-void receiveLoop(int &clientSocket)
+void handleClient(int connection)
 {
-    // Set 1 kB buffer char buffer[1024] = {0};
-    char buffer[1024] = {0};
-    while (true)
+    char buffer[4096]; //4 kB
+
+    // Receive request
+    ssize_t bytes_received = recv(connection, buffer, sizeof(buffer) - 1, 0);
+    if (bytes_received <= 0)
     {
-        // Receiving data from client
-        ssize_t message_size = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
-
-        // Detects error
-        if (message_size <= 0) //ssize_t is set to -1 when an error occurs
-        {
-            std::cout << "Error, message is -1" << std::endl;
-            return;
-        }
-
-        // Set last byte to end string
-        buffer[message_size] = '\0';
-
-        // Display message
-        std::cout << "Message from client:\n" << buffer << std::endl;
-
-        if (strcmp(buffer, "Close") == false)
-        {
-            std::cout << "Closing server" << std::endl;
-            return;
-        }
-
-        // Sending response back to client
-        std::string buffer_string(buffer);
-        std::string response = handle_response(buffer_string);
-        const char* c_response = response.c_str();
-        send(clientSocket, c_response, strlen(c_response), 0);
+        std::cout << "Client disconnected or error occurred.\n";
+        return;
     }
-}
 
+    buffer[bytes_received] = '\0';
+    std::cout << "Request from client:\n" << buffer << std::endl;
+
+        // Compose response
+    std::string body = "Hi I am the server";
+    body += "\n";
+
+    std::string response =
+        "HTTP/1.1 200 OK\r\n"
+        "Content-Type: text/plain\r\n"
+        "Content-Length: " + std::to_string(body.size()) + "\r\n"
+        "\r\n" +
+        body;
+
+    // Send response
+    ssize_t bytes_sent = send(connection, response.c_str(), response.size(), 0);
+    if (bytes_sent == -1)
+    {
+        std::cerr << "Send failed (client may have closed connection)\n";
+        return;
+    }
+
+}
 
 int main()
 {
-    // Initializing the server socket
-    int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
-    sockaddr_in serverAddress;
-    serverAddress.sin_family = AF_INET;
-    serverAddress.sin_port = htons(8080);
-    serverAddress.sin_addr.s_addr = INADDR_ANY;
-    bind(serverSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress));
-    listen(serverSocket, 5);
-    int clientSocket = accept(serverSocket, nullptr, nullptr);
+    signal(SIGPIPE, SIG_IGN);
 
-    receiveLoop(clientSocket);
+    int port = 8081;
+    int server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    if (server_socket == -1)
+    {
+        std::cerr << "Failed to create socket. errno: " << errno << std::endl;
+        return 1;
+    }
 
-    // Close sockets
-    close(clientSocket);
-    close(serverSocket);
+    // Allow address reuse (so you can restart quickly)
+    int opt = 1;
+    setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
+    sockaddr_in addr{};
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = INADDR_ANY;
+    addr.sin_port = htons(port);
+
+    if (bind(server_socket, (struct sockaddr*)&addr, sizeof(addr)) < 0)
+    {
+        std::cerr << "Bind failed. errno: " << errno << std::endl;
+        return 1;
+    }
+
+    if (listen(server_socket, 10) < 0)
+    {
+        std::cerr << "Listen failed. errno: " << errno << std::endl;
+        return 1;
+    }
+
+    std::cout << "Server listening on port " << port << "...\n";
+
+    int max_requests = 3;
+    int i = 0;
+    while (i < 3)
+    {
+        i++;
+        sockaddr_in client_addr{};
+        socklen_t client_len = sizeof(client_addr);
+        int connection = accept(server_socket, (struct sockaddr*)&client_addr, &client_len);
+        if (connection < 0)
+        {
+            std::cerr << "Accept failed. errno: " << errno << std::endl;
+            continue;
+        }
+
+        std::cout << "New connection accepted.\n";
+        handleClient(connection);
+        close(connection);
+    }
+
+    close(server_socket);
     return 0;
 }

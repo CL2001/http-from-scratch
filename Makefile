@@ -7,6 +7,7 @@ CLIENT_EXECUTABLE = client
 # The build directory
 BUILD_DIR = build
 
+all: build server
 
 build:
 	@mkdir -p $(BUILD_DIR)
@@ -16,8 +17,6 @@ build:
 server:
 	@./$(BUILD_DIR)/$(SERVER_EXECUTABLE)
 
-client:
-	@./$(BUILD_DIR)/$(CLIENT_EXECUTABLE)
 
 clean:
 	@rm -rf $(BUILD_DIR)
