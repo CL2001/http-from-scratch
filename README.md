@@ -43,6 +43,11 @@ Access private hidden ressources
 curl -u username:password localhost:8080/private
 ```
 
+Close server (will return a curl error)
+```bash
+curl localhost:8080/closing
+```
+
 
 All c++ code is found in the src folder and header files are found in the include folder
 

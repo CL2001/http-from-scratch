@@ -13,4 +13,6 @@ include_directories(include)
 # Add the executable
 add_executable(server
     src/server.cpp
+    src/response_format.cpp
+    src/load_balancer.cpp
 )
