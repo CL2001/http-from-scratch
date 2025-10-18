@@ -6,6 +6,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <csignal>
+#include "safe_socket.hpp"
 
 void handleClient(int connection)
 {
@@ -20,9 +21,10 @@ void handleClient(int connection)
     }
 
     buffer[bytes_received] = '\0';
-    std::cout << "Request from client:\n" << buffer << std::endl;
+    std::string message = buffer;
+    std::cout << "Request from client:\n" << message << std::endl;
 
-        // Compose response
+    // Compose response
     std::string body = "Hi I am the server";
     body += "\n";
 
@@ -47,7 +49,7 @@ int main()
 {
     signal(SIGPIPE, SIG_IGN);
 
-    int port = 8081;
+    int port = 8080;
     int server_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (server_socket == -1)
     {
@@ -83,18 +85,25 @@ int main()
     while (i < 3)
     {
         i++;
-        sockaddr_in client_addr{};
-        socklen_t client_len = sizeof(client_addr);
-        int connection = accept(server_socket, (struct sockaddr*)&client_addr, &client_len);
-        if (connection < 0)
+        try 
         {
-            std::cerr << "Accept failed. errno: " << errno << std::endl;
-            continue;
-        }
+            sockaddr_in client_addr{};
+            socklen_t client_len = sizeof(client_addr);
+            int connection = accept(server_socket, (struct sockaddr*)&client_addr, &client_len);
+            if (connection < 0)
+            {
+                throw std::runtime_error("Failed to establish connection, connection < 0");
+            }
 
-        std::cout << "New connection accepted.\n";
-        handleClient(connection);
-        close(connection);
+            std::cout << "New connection accepted.\n";
+            SafeSocket safe_socket(connection);
+            handleClient(connection);
+        }
+        catch (const std::exception& e)
+        {
+            std::cout << "Shutting down server" << std::endl;
+            break;
+        }
     }
 
     close(server_socket);
