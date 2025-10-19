@@ -28,7 +28,7 @@ bool handleClient(int connection)
 
 
     std::string response = LoadBalancer::balanceLoad(message);
-    if (response == "Closing")
+    if (response == Responses::r418())
     {
         closing_server = true;
     }
@@ -80,12 +80,9 @@ int main()
 
     std::cout << "Server listening on port " << port << "...\n";
 
-    int max_requests = 3;
-    int i = 0;
     bool close_server = false;
-    while (i < 3 && !close_server)
+    while (!close_server)
     {
-        i++;
         sockaddr_in client_addr{};
         socklen_t client_len = sizeof(client_addr);
         int connection = accept(safe_server_socket.get(), (struct sockaddr*)&client_addr, &client_len);

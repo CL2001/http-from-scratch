@@ -43,7 +43,7 @@ Access private hidden ressources
 curl -u username:password localhost:8080/private
 ```
 
-Close server (will return a curl error)
+Close server (will return a teapot error as an easter egg)
 ```bash
 curl localhost:8080/closing
 ```
