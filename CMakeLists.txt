@@ -11,8 +11,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 include_directories(include)
 
 # Add the executable
-add_executable(server
-    src/server.cpp
+add_executable(main
+    src/main.cpp
     src/response_format.cpp
     src/load_balancer.cpp
 )

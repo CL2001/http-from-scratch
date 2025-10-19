@@ -27,10 +27,13 @@ curl localhost:8080
 
 Returns an html file in output.html
 ```bash
-curl -o output.html localhost:8080/public-html
+curl -o output.html localhost:8080/public
 ```
 
 Modify a page and retrieve it
+```bash
+curl localhost:8080/modify
+```
 ```bash
 curl -X POST -d "message=I love this!" localhost:8080/modify
 ```
@@ -41,6 +44,9 @@ curl localhost:8080/modify
 Access private hidden ressources
 ```bash
 curl -u username:password localhost:8080/private
+```
+```bash
+curl -u wrong_username:wrong_password localhost:8080/private
 ```
 
 Close server (will return a teapot error as an easter egg)
