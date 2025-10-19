@@ -41,10 +41,10 @@ std::string LoadBalancer::balanceLoad(std::string message)
     std::cout << "Header: " << header.server << std::endl; 
     if (header.server == "/closing" || header.server == "Error")
     {
-        return Responses::r418();
+        return Response::r418();
     }
 
 
     std::string body = "Hi I am the server";
-    return Responses::r200(body);
+    return Response::r200(body);
 }

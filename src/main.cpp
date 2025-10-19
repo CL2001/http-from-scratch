@@ -28,7 +28,7 @@ bool handleClient(int connection)
 
 
     std::string response = LoadBalancer::balanceLoad(message);
-    if (response == Responses::r418())
+    if (response == Response::r418())
     {
         closing_server = true;
     }

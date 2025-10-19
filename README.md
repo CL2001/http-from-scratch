@@ -19,18 +19,19 @@ make
 
 
 ## Run these commands in a seperate terminal
+Add -v for verbose responses.
 
 Basic server response
 ```bash
 curl localhost:8080
 ```
 
-Returns an html file in output.html
+Returns an html file in output.html (Returns 200)
 ```bash
 curl -o output.html localhost:8080/public
 ```
 
-Modify a page and retrieve it
+Modify a page and retrieve it (Returns 201 for post command)
 ```bash
 curl localhost:8080/modify
 ```
@@ -39,6 +40,11 @@ curl -X POST -d "message=I love this!" localhost:8080/modify
 ```
 ```bash
 curl localhost:8080/modify
+```
+
+Displaced server (Returns 301 for post command)
+```bash
+curl localhost:8080/displaced
 ```
 
 Access private hidden ressources
