@@ -47,12 +47,17 @@ Displaced server (Returns 301 for post command)
 curl localhost:8080/displaced
 ```
 
-Access private hidden ressources
+Access private hidden ressources (Return 401 for error)
 ```bash
 curl -u username:password localhost:8080/private
 ```
 ```bash
 curl -u wrong_username:wrong_password localhost:8080/private
+```
+
+Page not found (Return 404 for error)
+```bash
+curl localhost:8080/notfound
 ```
 
 Close server (will return a teapot error as an easter egg)

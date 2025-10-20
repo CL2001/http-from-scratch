@@ -1,3 +1,7 @@
 build/
 Design.txt
 .vscode
+Accept:
+GET
+Host:
+User-Agent:
