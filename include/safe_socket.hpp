@@ -1,5 +1,7 @@
+// safe_socket.hpp
 #pragma once
 #include <unistd.h>
+
 
 class SafeSocket {
     int conn;

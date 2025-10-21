@@ -36,7 +36,7 @@ Modify a page and retrieve it (Returns 201 for post command)
 curl localhost:8080/modify
 ```
 ```bash
-curl -X POST -d "message=I love this!" localhost:8080/modify
+curl -X POST -d "I am modifying!" localhost:8080/modify
 ```
 ```bash
 curl localhost:8080/modify

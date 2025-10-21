@@ -1,19 +1,17 @@
+// load_balancer.cpp
 #include "load_balancer.hpp"
 
 
-#include <iostream>
-
-
-LoadBalancer::Header extractHeader(std::string first_line)
+Message extractHeader(std::string first_line)
 {
-    LoadBalancer::Header header;
+    Message header;
     size_t first_space = first_line.find(' ');
     if (first_space == std::string::npos) {return header;}
     std::string request_type_string = first_line.substr(0, first_space);
     if (request_type_string == "GET")
-        header.request_type = LoadBalancer::RequestType::Get;
+        header.request_type = RequestType::Get;
     else if (request_type_string == "POST")
-        header.request_type = LoadBalancer::RequestType::Post;
+        header.request_type = RequestType::Post;
     else
         return header;
 
@@ -25,26 +23,39 @@ LoadBalancer::Header extractHeader(std::string first_line)
     return header;
 }
 
+
 std::string extractBody(std::string message)
 {
-
-    return " ";
+    size_t pos = message.rfind('\n');
+    std::string last_line = (pos == std::string::npos) ? message : message.substr(pos + 1);
+    return last_line;
 }
 
 
-std::string LoadBalancer::balanceLoad(std::string message)
+std::string LoadBalancer::balanceLoad(std::string msg)
 {
-    size_t first_new_line = message.find('\n');
-    std::string first_line = (first_new_line != std::string::npos) ? message.substr(0, first_new_line) : message;
+    size_t first_new_line = msg.find('\n');
+    std::string first_line = (first_new_line != std::string::npos) ? msg.substr(0, first_new_line) : msg;
 
-    LoadBalancer::Header header = extractHeader(first_line);
-    std::cout << "Header: " << header.server << std::endl; 
-    if (header.server == "/closing" || header.server == "Error")
+    Message message = extractHeader(first_line);
+    if (message.request_type == RequestType::Post)
     {
-        return Response::r418();
+        message.body = extractBody(msg);
     }
 
-
-    std::string body = "Hi I am the server";
-    return Response::r200(body);
+    // Send request to server
+    if (message.server == "/closing" || message.server == "Error")
+        return Response::r418();
+    else if (message.server == "/")
+        return Server::normal(message);
+    else if (message.server == "/public")
+        return Server::pub(message);
+    else if (message.server == "/modify")
+        return Server::modify(message);
+    else if (message.server == "/displaced")
+        return Server::displaced(message);
+    else if (message.server == "/private")
+        return Server::priv(message);
+    else
+        return Server::notFound();
 }

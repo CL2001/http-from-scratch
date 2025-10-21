@@ -15,4 +15,5 @@ add_executable(main
     src/main.cpp
     src/response_format.cpp
     src/load_balancer.cpp
+    src/server.cpp
 )

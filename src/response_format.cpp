@@ -1,4 +1,6 @@
+// response_format.cpp
 #include "response_format.hpp"
+
 
 std::string Response::r200(std::string msg)
 {
@@ -10,6 +12,7 @@ std::string Response::r200(std::string msg)
             body;
 }
 
+
 std::string Response::r201(std::string msg)
 {
     std::string body = "Created 201. " + msg + "\r\n";
@@ -19,6 +22,7 @@ std::string Response::r201(std::string msg)
             "\r\n" +
             body;
 }
+
 
 std::string Response::r301(std::string new_location)
 {
@@ -42,6 +46,7 @@ std::string Response::r401()
             "\r\n";
 }
 
+
 std::string Response::r404()
 {
     return  "HTTP/1.1 404 Not Found\r\n"
@@ -51,7 +56,6 @@ std::string Response::r404()
             "Error 404: Not found"
             "\r\n";
 }
-
 
 
 std::string Response::r418()

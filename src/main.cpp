@@ -1,4 +1,4 @@
-// server.cpp
+// main.cpp
 #include <iostream>
 #include <string>
 #include <cstring>
@@ -8,6 +8,7 @@
 #include <csignal>
 #include "safe_socket.hpp"
 #include "load_balancer.hpp"
+
 
 bool handleClient(int connection)
 {
@@ -26,13 +27,11 @@ bool handleClient(int connection)
     std::string message = buffer;
     std::cout << "Request from client:\n" << message << std::endl;
 
-
     std::string response = LoadBalancer::balanceLoad(message);
     if (response == Response::r418())
     {
         closing_server = true;
     }
-
 
     // Send response
     ssize_t bytes_sent = send(connection, response.c_str(), response.size(), 0);
@@ -43,6 +42,7 @@ bool handleClient(int connection)
     }
     return closing_server;
 }
+
 
 int main()
 {
@@ -83,6 +83,7 @@ int main()
     bool close_server = false;
     while (!close_server)
     {
+        std::cout << "\nWaiting on new connection..." << std::endl;
         sockaddr_in client_addr{};
         socklen_t client_len = sizeof(client_addr);
         int connection = accept(safe_server_socket.get(), (struct sockaddr*)&client_addr, &client_len);
