@@ -1,12 +1,8 @@
 # HTTP From Scratch
 
-This project aims at recreating the HTTP/1 protocol from scratch in c++
-We have a server and a client binary interacting and communicating using the http protocol by requesting and sending information
-
-
-A tcp style connection at the transport layer is assumed since the communication between two binaries is extremely reliable and the focus of this project is http not tcp.
-The connection will be made over sockets so the focus remains on http
-
+This project aims at recreating the HTTP/1.1 and HTTP/2.0 protocol from scratch in C++
+We have a create a server on port 8080, or any other port desired using C++ sockets.
+Using C++ sockets doesn't make the project entirely from scratch, but since c++ sockets are essentially a wrapper around system calls, I consider the use of C++ sockets as justified. Re-implementing the TCP/IP layer would duplicate kernel functionality and distract from the core goal
 
 
 ## Start the server
@@ -28,7 +24,7 @@ curl localhost:8080
 
 Returns an html file in output.html (Returns 200)
 ```bash
-curl -o output.html localhost:8080/public
+curl localhost:8080/public
 ```
 
 Modify a page and retrieve it (Returns 201 for post command)
@@ -49,10 +45,10 @@ curl localhost:8080/displaced
 
 Access private hidden ressources (Return 401 for error)
 ```bash
-curl -u username:password localhost:8080/private
+curl -u wrong_username:wrong_password localhost:8080/private
 ```
 ```bash
-curl -u wrong_username:wrong_password localhost:8080/private
+curl -u username:password localhost:8080/private
 ```
 
 Page not found (Return 404 for error)

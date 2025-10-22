@@ -14,6 +14,7 @@ struct Message {
     RequestType request_type{RequestType::Get};
     std::string server{"Error"};
     std::string body{""};
+    std::string msg{""};
 };
 
 

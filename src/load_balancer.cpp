@@ -38,6 +38,7 @@ std::string LoadBalancer::balanceLoad(std::string msg)
     std::string first_line = (first_new_line != std::string::npos) ? msg.substr(0, first_new_line) : msg;
 
     Message message = extractHeader(first_line);
+    message.msg = msg;
     if (message.request_type == RequestType::Post)
     {
         message.body = extractBody(msg);
